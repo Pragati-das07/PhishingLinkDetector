@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Phishing Link Detector</title>
+
+</head>
+
+
+<body>
+
+    <h1>🔐 Phishing Link Detector</h1>
+
+    <p>Check whether a link looks suspicious.</p>
+
+
+    <input
+        type="text"
+        id="url"
+        placeholder="Paste a link here"
+    >
+
+
+    <button onclick="checkLink()">
+        Check Link
+    </button>
+
+
+    <h2 id="result"></h2>
+
+    <p id="score"></p>
+
+    <h3>Why?</h3>
+
+    <ul id="reasons"></ul>
+
+
+    <script>
+
+        function checkLink() {
+
+            let url =
+                document.getElementById("url").value;
+
+
+            if (url === "") {
+
+                document.getElementById("result").innerText =
+                    "Please enter a link.";
+
+                document.getElementById("score").innerText = "";
+
+                document.getElementById("reasons").innerHTML = "";
+
+                return;
+
+            }
+
+
+            let score = 0;
+
+            let reasons = [];
+
+
+            // Check HTTP
+
+            if (url.startsWith("http://")) {
+
+                score += 20;
+
+                reasons.push(
+                    "Website uses HTTP instead of HTTPS"
+                );
+
+            }
+
+
+            // Check IP address
+
+            let ipPattern =
+                /^https?:\/\/\d+\.\d+\.\d+\.\d+/;
+
+
+            if (ipPattern.test(url)) {
+
+                score += 30;
+
+                reasons.push(
+                    "IP address detected instead of a normal domain"
+                );
+
+            }
+
+
+            // Check suspicious words
+
+            if (
+                url.toLowerCase().includes("login") ||
+                url.toLowerCase().includes("verify") ||
+                url.toLowerCase().includes("password") ||
+                url.toLowerCase().includes("bank")
+            ) {
+
+                score += 30;
+
+                reasons.push(
+                    "Suspicious security-related keyword detected"
+                );
+
+            }
+
+
+            // Check long URL
+
+            if (url.length > 100) {
+
+                score += 20;
+
+                reasons.push(
+                    "URL is unusually long"
+                );
+
+            }
+
+
+            // Maximum score = 100
+
+            if (score > 100) {
+
+                score = 100;
+
+            }
+
+
+            // Display risk level
+
+            if (score >= 60) {
+
+                document.getElementById("result").innerText =
+                    "🔴 High Risk";
+
+            }
+
+            else if (score >= 30) {
+
+                document.getElementById("result").innerText =
+                    "🟡 Suspicious Link";
+
+            }
+
+            else {
+
+                document.getElementById("result").innerText =
+                    "🟢 Low Risk";
+
+            }
+
+
+            // Display score
+
+            document.getElementById("score").innerText =
+                "Risk Score: " + score + "/100";
+
+
+            // Display reasons
+
+            let reasonsList =
+                document.getElementById("reasons");
+
+
+            reasonsList.innerHTML = "";
+
+
+            if (reasons.length === 0) {
+
+                let item =
+                    document.createElement("li");
+
+                item.innerText =
+                    "No obvious phishing indicators detected.";
+
+                reasonsList.appendChild(item);
+
+            }
+
+            else {
+
+                reasons.forEach(function(reason) {
+
+                    let item =
+                        document.createElement("li");
+
+                    item.innerText = reason;
+
+                    reasonsList.appendChild(item);
+
+                });
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
